@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 from wpilib import Field2d, SmartDashboard
 
-from wpimath.geometry import Pose2d
+from wpimath.geometry import Pose2d, Pose3d
 from wpimath.units import meters_per_second, radians_per_second
 from wpimath.kinematics import DifferentialDriveOdometry, ChassisSpeeds, DifferentialDriveKinematics
 from wpimath.controller import SimpleMotorFeedforwardMeters
@@ -17,6 +17,8 @@ from components.drivetrain.drivetrain_constants import (
 )
 
 from libs import RequestArbitrator, BasicPriority, TunablePIDController
+
+from ntcore import NetworkTableInstance
 
 
 class DriveMode(Enum):
@@ -71,11 +73,24 @@ class Drivetrain:
         self.simulated_field = Field2d()
         SmartDashboard.putData("Field", self.simulated_field)
 
+        self.robot_pose_publisher = NetworkTableInstance.getDefault() \
+            .getStructTopic("/SmartDashboard/Drivetrain/RobotPose3d", Pose3d) \
+            .publish()
+
     def get_pose(self) -> Pose2d:
         """
         Returns the current estimated robot pose.
         """
         return self.odometry.getPose()
+
+    def get_chassis(self) -> ChassisSpeeds:
+        """
+        Returns the desired ChassisSpeeds object this iteration.
+        """
+        vx = self.linear_velocity_controller.resolve().value
+        omega = self.angular_velocity_controller.resolve().value
+
+        return ChassisSpeeds(vx, 0.0, omega)
 
     def request_linear_velocity(
         self,
@@ -195,5 +210,6 @@ class Drivetrain:
         )
 
         self.simulated_field.setRobotPose(self.get_pose())
+        self.robot_pose_publisher.set(Pose3d(self.get_pose()))
 
         self.io.update()

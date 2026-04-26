@@ -41,18 +41,18 @@ class DriveLeftPID:
     """
     Holds the left velocity PID gains for the drivetrain component.
     """
-    KP = 0.0
-    KI = 0.13
-    KD = 0.07
+    KP = 0.2
+    KI = 0.0
+    KD = 0.2
 
 
 class DriveRightPID:
     """
     Holds the right velocity PID gains for the drivetrain component.
     """
-    KP = 0.0
-    KI = 0.13
-    KD = 0.07
+    KP = 0.2
+    KI = 0.0
+    KD = 0.2
 
 
 class DriveLeftFF:

@@ -3,6 +3,7 @@ import math
 from wpimath.units import (
     volts, 
     meters, 
+    radians,
     kilogram_square_meters, 
     radians_per_second
 )
@@ -17,8 +18,12 @@ class ArmConstants:
 
     MAX_VELOCITY: radians_per_second = 7.8
     
-    MIN_ANGLE = 0.0
-    MAX_ANGLE = math.pi / 4
+    MIN_ANGLE: radians = 0.0
+    MAX_ANGLE: radians = math.pi / 4
+
+    # The amount of radians where the intake will still pick up balls of the ground,
+    # even though the intake arm isn't at its minimum angle.
+    MIN_ANGLE_TOLERANCE: radians = 0.13
 
 
 class ArmCAN:

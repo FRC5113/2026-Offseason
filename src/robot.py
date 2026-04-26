@@ -1,6 +1,7 @@
 from magicbot import MagicRobot
 
 from wpilib import Joystick
+from ntcore import NetworkTableInstance
 
 from components.drivetrain.drivetrain import Drivetrain
 from components.drivetrain.drivetrain_io.io_base import DrivetrainIOBase
@@ -26,6 +27,9 @@ from components.shooter.shooter_controller import ShooterController
 from components.shooter.shooter_io.real_io import RealShooterIO
 from components.shooter.shooter_io.simulated_io import SimulatedShooterIO
 
+from components.game_sim.game_peice_sim import GamePieceSim
+from components.game_sim.game_piece_controller import GamePieceController
+
 from libs import FaultLogger, ActionScheduler
 
 from actions.taxi_drive import taxi_drive
@@ -39,6 +43,9 @@ class MyRobot(MagicRobot):
     arm_controller: ArmController
     intake_controller: IntakeController
     shooter_controller: ShooterController
+
+    game_piece_sim: GamePieceSim
+    game_piece_controller: GamePieceController
 
     drivetrain: Drivetrain
     arm: Arm
@@ -66,9 +73,28 @@ class MyRobot(MagicRobot):
             self.intake_io = RealIntakeIO(self.fault_logger)
             self.shooter_io = RealShooterIO(self.fault_logger)
 
+        self.previously_auto = False
+
+    def _handle_auto_lifecycle(self) -> None:
+        if self.isAutonomous() and not self.previously_auto:
+            self.onAutoInit()
+            self.previously_auto = True
+        if self.isAutonomous() and self.previously_auto:
+            self.onAutoPeriodic()
+        if not self.isAutonomous() and self.previously_auto:
+            self.onAutoExit()
+            self.previously_auto = False
+
     def robotPeriodic(self) -> None:
         self.fault_logger.run()
+        self._handle_auto_lifecycle()
+        NetworkTableInstance.getDefault().flush()
+    
+    def onAutoInit(self) -> None:
+        self.action_scheduler.schedule(taxi_drive(self.drivetrain), "taxi_drive")
+
+    def onAutoPeriodic(self) -> None:
         self.action_scheduler.run()
     
-    def autonomousInit(self) -> None:
-        self.action_scheduler.schedule(taxi_drive(self.drivetrain), "taxi_drive")
+    def onAutoExit(self) -> None:
+        self.action_scheduler.cancel_all()

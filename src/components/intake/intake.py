@@ -50,7 +50,7 @@ class Intake:
         SmartDashboard.putNumber("Intake/resolvedPercent/percent", resolved.value)
         SmartDashboard.putString("Intake/resolvedPercent/source", resolved.source)
         SmartDashboard.putNumber("Intake/resolvedPercent/priority", resolved.priority)
-    
+
     def execute(self) -> None:
         """
         Method that directly moves the robot each iteration.
