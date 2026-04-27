@@ -52,7 +52,7 @@ class FuelSim:
                     if speed > 1e-6:
                         Fd = self.vel * (-const.DRAG_FORCE_FACTOR * speed)
 
-                accel = Fg + (Fd) / (const.FUEL_MASS)
+                accel = (Fg + Fd) / (const.FUEL_MASS)
                 self.vel = self.vel + (accel * (const.PERIOD / subticks))
             
             if abs(self.vel.Z()) < 0.05 and self.pos.Z() <= const.FUEL_RADIUS + 0.03:

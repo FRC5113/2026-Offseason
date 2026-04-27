@@ -4,8 +4,8 @@ from wpilib import RobotController
 
 from wpimath.units import volts, radians, radians_per_second
 
-from components.arm.arm_io.io_base import ArmIOBase
-from components.arm.arm_constants import ArmConstants, ArmCAN
+from components.intake_arm.intake_arm_io.io_base import IntakeArmIOBase
+from components.intake_arm.intake_arm_constants import IntakeArmConstants, IntakeArmCAN
 
 from libs import FaultLogger
 from libs.utils.talon_faults import TalonFaultLogger
@@ -15,17 +15,17 @@ from phoenix6.controls import Follower
 from phoenix6.signals import MotorAlignmentValue
 
 
-class RealArmIO(ArmIOBase):
+class RealArmIO(IntakeArmIOBase):
     """
     IO that allows the robot to run with real hardware.
     """
     def __init__(self, fault_logger: FaultLogger) -> None:
         self.fault_logger = fault_logger
 
-        self.left_motor = TalonFXS(ArmCAN.LEFT)
-        self.right_motor = TalonFXS(ArmCAN.RIGHT)
+        self.left_motor = TalonFXS(IntakeArmCAN.LEFT)
+        self.right_motor = TalonFXS(IntakeArmCAN.RIGHT)
 
-        self.right_motor.set_control(Follower(ArmCAN.LEFT, MotorAlignmentValue.OPPOSED))
+        self.right_motor.set_control(Follower(IntakeArmCAN.LEFT, MotorAlignmentValue.OPPOSED))
 
         self._check_motor_faults()
 
@@ -62,7 +62,7 @@ class RealArmIO(ArmIOBase):
 
     def set_voltage(self, voltage: volts) -> None:
         self.left_motor.setVoltage(
-            clamp(voltage, -ArmConstants.MAX_VOLTAGE, ArmConstants.MAX_VOLTAGE)
+            clamp(voltage, -IntakeArmConstants.MAX_VOLTAGE, IntakeArmConstants.MAX_VOLTAGE)
         )
 
     def update(self) -> None:

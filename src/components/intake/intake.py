@@ -7,6 +7,9 @@ from components.intake.intake_io.io_base import IntakeIOBase
 
 
 class Intake:
+    """
+    Represents a subsystem containing rollers that fling fuel into the bason.
+    """
     io: IntakeIOBase
 
     def setup(self) -> None:
@@ -53,12 +56,11 @@ class Intake:
 
     def execute(self) -> None:
         """
-        Method that directly moves the robot each iteration.
+        Directly moves the robot each iteration.
         """
         self.publish_telemetry()
 
         resolved_percent = self.percent_controller.resolve().value
-
         self.io.set_voltage(resolved_percent * RobotController.getBatteryVoltage())
 
         self.io.update()

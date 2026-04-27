@@ -6,6 +6,9 @@ from libs import BasicPriority
 
 
 class IntakeController:
+    """
+    Controls the intake via teleoperation.
+    """
     intake: Intake
     controller: Joystick
     

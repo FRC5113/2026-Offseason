@@ -3,33 +3,33 @@ from wpilib import SmartDashboard
 from wpimath.units import radians
 from wpimath.controller import ArmFeedforward
 
-from components.arm.arm_constants import ArmFF, ArmPID
-from components.arm.arm_io.io_base import ArmIOBase
-from components.arm.arm_constants import ArmConstants
+from components.intake_arm.intake_arm_constants import IntakeArmFF, IntakeArmPID
+from components.intake_arm.intake_arm_io.io_base import IntakeArmIOBase
+from components.intake_arm.intake_arm_constants import IntakeArmConstants
 
 from libs import RequestArbitrator, BasicPriority, TunablePIDController
 from libs.utils.math_utils import clamp
 
 
-class Arm:
+class IntakeArm:
     """
-    Represents the basic arm mechanism of a simulated robot (single joint).
+    Represents the intake arm mechanism of a simulated robot (single joint).
     Uses PID control to reach requested angles with gravity compensation.
     """
-    io: ArmIOBase
+    io: IntakeArmIOBase
 
     def setup(self) -> None:
         self.arm_position_ff = ArmFeedforward(
-            kS=ArmFF.KS,
-            kG=ArmFF.KG,
-            kV=ArmFF.KV,
-            kA=ArmFF.KA
+            kS=IntakeArmFF.KS,
+            kG=IntakeArmFF.KG,
+            kV=IntakeArmFF.KV,
+            kA=IntakeArmFF.KA
         )
         self.arm_position_pid = TunablePIDController(
-            kp=ArmPID.KP, 
-            ki=ArmPID.KI, 
-            kd=ArmPID.KD,
-            directory="Tunables/ArmPID"
+            kp=IntakeArmPID.KP, 
+            ki=IntakeArmPID.KI, 
+            kd=IntakeArmPID.KD,
+            directory="Tunables/IntakeArmPID"
         )
 
         self.angle_controller = RequestArbitrator()
@@ -41,13 +41,13 @@ class Arm:
         source: str = "unknown"
     ) -> None:
         """
-        Requests a velocity to the arms angle controller.
+        Requests a velocity to the intake arms angle controller.
         """
         self.angle_controller.request(angle, priority.value, source)
 
     def _safe_defaults(self) -> None:
         """
-        Directly commands safe default values to the arm.
+        Directly commands safe default values to the intake arm.
         """
         self.io.set_voltage(0.0)
 
@@ -67,18 +67,18 @@ class Arm:
         """
         Runs each iteration at the beginning of component execution.
         """
-        SmartDashboard.putNumber("Arm/sensorData/position", self.io.get_position())
-        SmartDashboard.putNumber("Arm/sensorData/velocity", self.io.get_velocity())
-        SmartDashboard.putNumber("Arm/sensorData/appliedVoltage", self.io.get_voltage())
+        SmartDashboard.putNumber("IntakeArm/sensorData/position", self.io.get_position())
+        SmartDashboard.putNumber("IntakeArm/sensorData/velocity", self.io.get_velocity())
+        SmartDashboard.putNumber("IntakeArm/sensorData/appliedVoltage", self.io.get_voltage())
 
         resolved = self.angle_controller.resolve()
-        SmartDashboard.putNumber("Arm/resolvedAngle/angle", resolved.value)
-        SmartDashboard.putString("Arm/resolvedAngle/source", resolved.source)
-        SmartDashboard.putNumber("Arm/resolvedAngle/priority", resolved.priority)
+        SmartDashboard.putNumber("IntakeArm/resolvedAngle/angle", resolved.value)
+        SmartDashboard.putString("IntakeArm/resolvedAngle/source", resolved.source)
+        SmartDashboard.putNumber("IntakeArm/resolvedAngle/priority", resolved.priority)
 
     def _move_to_angle(self, angle: radians) -> None:
         """
-        Moves the arm to an angle via closed loop control.
+        Moves the intake arm to an angle via closed loop control.
         """
         current_angle = self.io.get_position()
         current_velocity = self.io.get_velocity()
@@ -95,7 +95,7 @@ class Arm:
         self.publish_telemetry()
 
         target_angle = self.angle_controller.resolve().value
-        target_angle = clamp(target_angle, ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE)
+        target_angle = clamp(target_angle, IntakeArmConstants.MIN_ANGLE, IntakeArmConstants.MAX_ANGLE)
 
         self._move_to_angle(target_angle)
         self.io.update()

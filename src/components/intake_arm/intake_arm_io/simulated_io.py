@@ -4,26 +4,26 @@ from wpilib.simulation import SingleJointedArmSim
 from wpimath.units import volts, radians, radians_per_second
 from wpimath.system.plant import DCMotor
 
-from components.arm.arm_io.io_base import ArmIOBase
-from components.arm.arm_constants import ArmConstants
+from components.intake_arm.intake_arm_io.io_base import IntakeArmIOBase
+from components.intake_arm.intake_arm_constants import IntakeArmConstants
 
 from libs.utils.math_utils import clamp
 
 
-class SimulatedArmIO(ArmIOBase):
+class SimulatedArmIO(IntakeArmIOBase):
     """
     IO that allows the robot to run without hardware.
     """
     def __init__(self) -> None:
         self._arm_sim = SingleJointedArmSim(
             gearbox=DCMotor.NEO(2),
-            gearing=ArmConstants.ARM_GEAR_RATIO,
-            moi=ArmConstants.ARM_MOI,
-            armLength=ArmConstants.ARM_LENGTH,
-            minAngle=ArmConstants.MIN_ANGLE,
-            maxAngle=ArmConstants.MAX_ANGLE,
+            gearing=IntakeArmConstants.ARM_GEAR_RATIO,
+            moi=IntakeArmConstants.ARM_MOI,
+            armLength=IntakeArmConstants.ARM_LENGTH,
+            minAngle=IntakeArmConstants.MIN_ANGLE,
+            maxAngle=IntakeArmConstants.MAX_ANGLE,
             simulateGravity=True,
-            startingAngle=ArmConstants.MIN_ANGLE
+            startingAngle=IntakeArmConstants.MIN_ANGLE
         )
 
         arm_gui_width = 20
@@ -37,7 +37,7 @@ class SimulatedArmIO(ArmIOBase):
 
         ligament_name = "Arm"
         ligament_length = 10
-        ligament_angle = ArmConstants.MIN_ANGLE
+        ligament_angle = IntakeArmConstants.MIN_ANGLE
 
         self._arm_ligament = self.arm_root.appendLigament(
             ligament_name, ligament_length, ligament_angle
@@ -63,7 +63,7 @@ class SimulatedArmIO(ArmIOBase):
 
     def update(self) -> None:
         self._arm_sim.setInputVoltage(
-            clamp(self._desired_voltage, -ArmConstants.MAX_VOLTAGE, ArmConstants.MAX_VOLTAGE)
+            clamp(self._desired_voltage, -IntakeArmConstants.MAX_VOLTAGE, IntakeArmConstants.MAX_VOLTAGE)
         )
 
         new_timestamp = Timer.getFPGATimestamp()

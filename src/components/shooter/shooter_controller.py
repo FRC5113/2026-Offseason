@@ -6,6 +6,9 @@ from libs import BasicPriority
 
 
 class ShooterController:
+    """
+    Controls the Shooter via teleoperation.
+    """
     shooter: Shooter
     controller: Joystick
     

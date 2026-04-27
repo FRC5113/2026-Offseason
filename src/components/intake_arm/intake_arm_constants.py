@@ -9,7 +9,7 @@ from wpimath.units import (
 )
 
 
-class ArmConstants:
+class IntakeArmConstants:
     MAX_VOLTAGE: volts = 12.0
 
     ARM_GEAR_RATIO = 9.18
@@ -26,7 +26,7 @@ class ArmConstants:
     MIN_ANGLE_TOLERANCE: radians = 0.13
 
 
-class ArmCAN:
+class IntakeArmCAN:
     """
     Holds the CAN ids for each motor used in the component.
     """
@@ -34,7 +34,7 @@ class ArmCAN:
     RIGHT = 6
 
 
-class ArmPID:
+class IntakeArmPID:
     """
     Holds the position PID gains for the arm component.
     """
@@ -42,7 +42,7 @@ class ArmPID:
     KI = 0.0
     KD = 0.8
 
-class ArmFF:
+class IntakeArmFF:
     """
     Holds the position FF gains for the arm component.
     """

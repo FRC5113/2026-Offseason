@@ -8,9 +8,9 @@ class ShooterConstants:
     GEAR_RATIO = 1.5
 
     SHOOTER_HEIGHT: meters = 0.635 # Height of the shooter relative to the ground
-    SHOOTER_HOOD_ANGLE: radians = 0.610
+    SHOOTER_HOOD_ANGLE: radians = 1.31
 
-    SHOOTER_PERCENT: percent = 0.3 # Static shooter percent; TODO: to be replaced
+    SHOOTER_PERCENT: percent = 1.0 # Static shooter percent; TODO: to be replaced
 
 
 class ShooterCAN:

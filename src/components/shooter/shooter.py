@@ -7,6 +7,9 @@ from components.shooter.shooter_io.io_base import ShooterIOBase
 
 
 class Shooter:
+    """
+    Represents a subsystem containing a full-length robot drum with a static hood.
+    """
     io: ShooterIOBase
 
     def setup(self) -> None:
@@ -53,12 +56,11 @@ class Shooter:
     
     def execute(self) -> None:
         """
-        Method that directly moves the robot each iteration.
+        Directly moves the robot each iteration.
         """
         self.publish_telemetry()
 
         resolved_percent = self.percent_controller.resolve().value
-
         self.io.set_voltage(resolved_percent * RobotController.getBatteryVoltage())
 
         self.io.update()

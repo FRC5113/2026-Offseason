@@ -2,15 +2,15 @@ from libs import BasicPriority
 
 from wpilib import Joystick, RobotState
 
-from components.arm.arm import Arm
-from components.arm.arm_constants import ArmConstants
+from components.intake_arm.intake_arm import IntakeArm
+from components.intake_arm.intake_arm_constants import IntakeArmConstants
 
 
-class ArmController:
+class IntakeArmController:
     """
-    Controls the arm via teleoperation.
+    Controls the intake arm via teleoperation.
     """
-    arm: Arm
+    intake_arm: IntakeArm
     controller: Joystick
 
     def setup(self) -> None:
@@ -18,9 +18,9 @@ class ArmController:
 
     def _safe_defaults(self) -> None:
         """
-        Requests safe values to the Arm.
+        Requests safe values to the IntakeArm.
         """
-        self.arm.request_angle(0.0, BasicPriority.SAFETY, "safety")
+        self.intake_arm.request_angle(0.0, BasicPriority.SAFETY, "safety")
 
     def on_enable(self) -> None:
         """
@@ -42,10 +42,10 @@ class ArmController:
             return
 
         if self.controller.getRawButton(1):
-            self.sticky_angle = ArmConstants.MAX_ANGLE
+            self.sticky_angle = IntakeArmConstants.MAX_ANGLE
         elif self.controller.getRawButton(2):
-            self.sticky_angle = ArmConstants.MAX_ANGLE / 2
+            self.sticky_angle = IntakeArmConstants.MAX_ANGLE / 2
         elif self.controller.getRawButton(3):
-            self.sticky_angle = ArmConstants.MIN_ANGLE
+            self.sticky_angle = IntakeArmConstants.MIN_ANGLE
         
-        self.arm.request_angle(self.sticky_angle, BasicPriority.TELEOP, "teleop")
+        self.intake_arm.request_angle(self.sticky_angle, BasicPriority.TELEOP, "teleop")

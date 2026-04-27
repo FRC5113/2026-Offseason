@@ -1,12 +1,12 @@
 from wpimath.units import volts, radians, radians_per_second
 
-from components.arm.arm_io.io_base import ArmIOBase
-from components.arm.arm_constants import ArmConstants
+from components.intake_arm.intake_arm_io.io_base import IntakeArmIOBase
+from components.intake_arm.intake_arm_constants import IntakeArmConstants
 
 from wpilib import Timer
 
 
-class ArmTestIO(ArmIOBase):
+class ArmTestIO(IntakeArmIOBase):
     """
     Test IO that simulates actual hardware.
     """
@@ -30,7 +30,7 @@ class ArmTestIO(ArmIOBase):
         """
         Sets the actual velocity based on commanded voltage.
         """
-        self._velocity = (voltage / self._battery_voltage) * ArmConstants.MAX_VELOCITY
+        self._velocity = (voltage / self._battery_voltage) * IntakeArmConstants.MAX_VELOCITY
     
     def set_velocity(
         self,

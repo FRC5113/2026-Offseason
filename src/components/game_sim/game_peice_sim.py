@@ -4,10 +4,12 @@ from wpimath.geometry import Translation3d
 from wpimath.units import meters_per_second
 
 from components.drivetrain.drivetrain import Drivetrain
-from components.arm.arm_io.io_base import ArmIOBase
-from components.shooter.shooter_io.io_base import ShooterIOBase
-from components.arm.arm_constants import ArmConstants
+
+from components.intake_arm.intake_arm_io.io_base import IntakeArmIOBase
+from components.intake_arm.intake_arm_constants import IntakeArmConstants
 from components.intake.intake_constants import IntakeConstants
+
+from components.shooter.shooter_io.io_base import ShooterIOBase
 from components.shooter.shooter_constants import ShooterConstants
 
 from libs.utils.fuel_sim.fuel_sim import FuelSim
@@ -21,7 +23,7 @@ class GamePieceSim:
     """
     drivetrain: Drivetrain
 
-    arm_io: ArmIOBase
+    intake_arm_io: IntakeArmIOBase
     shooter_io: ShooterIOBase
 
     def setup(self) -> None:
@@ -37,22 +39,24 @@ class GamePieceSim:
             lambda: self.drivetrain.get_chassis()
         )
 
+        self.fuel_sim.enable_air_resistance()
+
         intake_length_half = IntakeConstants.INTAKE_LENGTH / 2
         intake_width = IntakeConstants.INTAKE_WIDTH
         intake_front = RobotConst.ROBOT_LENGTH / 2
 
-        min_angle = ArmConstants.MIN_ANGLE
+        min_angle = IntakeArmConstants.MIN_ANGLE
 
         # The amount of radians where the intake will still pick up balls of the ground,
         # even though the intake arm isn't at its minimum angle.
-        min_angle_tol = ArmConstants.MIN_ANGLE_TOLERANCE
+        min_angle_tol = IntakeArmConstants.MIN_ANGLE_TOLERANCE
 
         self.fuel_sim.register_intake(
             x_min=intake_front, 
             x_max=intake_front + intake_width, 
             y_min=-intake_length_half, 
             y_max=intake_length_half,
-            able_to_intake=lambda: self.arm_io.get_position() <= min_angle + min_angle_tol
+            able_to_intake=lambda: self.intake_arm_io.get_position() <= min_angle + min_angle_tol
         )
 
         self.fuel_sim.log_fuels()
@@ -98,7 +102,7 @@ class GamePieceSim:
         self.fuel_sim.launch_fuel(
             launch_velocity=self._get_ball_velocity(),
             hood_angle=ShooterConstants.SHOOTER_HOOD_ANGLE,
-            shooter_yaw=self.drivetrain.get_pose().rotation().radians(), # Same as robot orientation
+            shooter_yaw=0.0,
             launch_height=ShooterConstants.SHOOTER_HEIGHT
         )
 
