@@ -5,6 +5,8 @@ from wpilib import Joystick, RobotState
 from components.intake_arm.intake_arm import IntakeArm
 from components.intake_arm.intake_arm_constants import IntakeArmConstants
 
+from constants import JoystickButton
+
 
 class IntakeArmController:
     """
@@ -41,11 +43,9 @@ class IntakeArmController:
         if not RobotState.isTeleop():
             return
 
-        if self.controller.getRawButton(1):
+        if self.controller.getRawButton(JoystickButton.INTAKE_ARM_UP):
             self.sticky_angle = IntakeArmConstants.MAX_ANGLE
-        elif self.controller.getRawButton(2):
-            self.sticky_angle = IntakeArmConstants.MAX_ANGLE / 2
-        elif self.controller.getRawButton(3):
+        elif self.controller.getRawButton(JoystickButton.INTAKE_ARM_DOWN):
             self.sticky_angle = IntakeArmConstants.MIN_ANGLE
         
         self.intake_arm.request_angle(self.sticky_angle, BasicPriority.TELEOP, "teleop")

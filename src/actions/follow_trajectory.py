@@ -15,12 +15,14 @@ def follow_trajectory(drivetrain: Drivetrain, trajectory_name: str) -> AsyncActi
 
     :param drivetrain: The drivetrain component
     :param trajectory_name: Name of the Choreo trajectory
+
+    :raises ValueError: If no trajectories were found with the given name.
     """
     trajectory = choreo.load_differential_trajectory(trajectory_name)
     samples = trajectory.get_samples()
 
     if not samples:
-        return
+        raise ValueError(f"No samples in trajectory: {trajectory_name}")
 
     controller = LTVUnicycleController(
         dt=0.02,

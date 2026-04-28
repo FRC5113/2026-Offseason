@@ -4,6 +4,8 @@ from components.intake.intake import Intake
 
 from libs import BasicPriority
 
+from constants import JoystickButton
+
 
 class IntakeController:
     """
@@ -37,9 +39,9 @@ class IntakeController:
         if not RobotState.isTeleop():
             return
 
-        if self.controller.getRawButton(4):
+        if self.controller.getRawButton(JoystickButton.INTAKE_GRABBING):
             self.intake.request_percent(1.0, BasicPriority.TELEOP, "teleop")
-        elif self.controller.getRawButton(5):
+        elif self.controller.getRawButton(JoystickButton.INTAKE_RELEASING):
             self.intake.request_percent(-1.0, BasicPriority.TELEOP, "teleop")
         else:
             self.intake.request_percent(0.0, BasicPriority.TELEOP, "teleop")

@@ -5,6 +5,8 @@ from components.drivetrain.drivetrain_constants import DriveConstants
 
 from libs import BasicPriority
 
+from constants import JoystickAxis
+
 
 class DrivetrainController:
     """
@@ -39,8 +41,8 @@ class DrivetrainController:
         if not RobotState.isTeleop():
             return
 
-        linear_percent = self.controller.getX()
-        angular_percent = self.controller.getY()
+        linear_percent = self.controller.getRawAxis(JoystickAxis.DRIVE_LINEAR)
+        angular_percent = self.controller.getRawAxis(JoystickAxis.DRIVE_ANGULAR)
 
         linear_velocity = linear_percent * DriveConstants.MAX_LINEAR_SPEED
         angular_velocity = angular_percent * DriveConstants.MAX_ANGULAR_SPEED

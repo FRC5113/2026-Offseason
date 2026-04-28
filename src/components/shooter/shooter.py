@@ -1,9 +1,10 @@
 from libs import BasicPriority, RequestArbitrator
 
 from wpilib import RobotController, SmartDashboard
-from wpimath.units import percent
+from wpimath.units import meters_per_second
 
 from components.shooter.shooter_io.io_base import ShooterIOBase
+from components.shooter.shooter_constants import ShooterConstants
 
 
 class Shooter:
@@ -13,18 +14,18 @@ class Shooter:
     io: ShooterIOBase
 
     def setup(self) -> None:
-        self.percent_controller = RequestArbitrator()
+        self.velocity_controller = RequestArbitrator()
 
-    def request_percent(
+    def request_velocity(
         self,
-        percent: percent,
+        percent: meters_per_second,
         priority: BasicPriority, 
         source: str = "unknown"
     ) -> None:
         """
-        Requests a velocity to the shooters percent controller.
+        Requests a velocity to the shooters velocity controller.
         """
-        self.percent_controller.request(percent, priority.value, source)
+        self.velocity_controller.request(percent, priority.value, source)
 
     def _safe_defaults(self) -> None:
         """
@@ -49,18 +50,22 @@ class Shooter:
         Runs each iteration at the beginning of component execution.
         """
         SmartDashboard.putNumber("Shooter/sensorData/voltage", self.io.get_voltage())
-        resolved = self.percent_controller.resolve()
-        SmartDashboard.putNumber("Shooter/resolvedPercent/percent", resolved.value)
-        SmartDashboard.putString("Shooter/resolvedPercent/source", resolved.source)
-        SmartDashboard.putNumber("Shooter/resolvedPercent/priority", resolved.priority)
-    
+        resolved = self.velocity_controller.resolve()
+        SmartDashboard.putNumber("Shooter/resolvedVelocity/velocity", resolved.value)
+        SmartDashboard.putString("Shooter/resolvedVelocity/source", resolved.source)
+        SmartDashboard.putNumber("Shooter/resolvedVelocity/priority", resolved.priority)
+
     def execute(self) -> None:
         """
         Directly moves the robot each iteration.
         """
         self.publish_telemetry()
 
-        resolved_percent = self.percent_controller.resolve().value
-        self.io.set_voltage(resolved_percent * RobotController.getBatteryVoltage())
+        resolved_velocity = self.velocity_controller.resolve().value  # Linear velocity in m/s
+
+        # Convert linear velocity in mps to angular velocity in radps
+        angular_velocity = resolved_velocity / ShooterConstants.FLYWHEEL_RADIUS
+        percent = angular_velocity / ShooterConstants.MAX_VELOCITY
+        self.io.set_voltage(percent * RobotController.getBatteryVoltage())
 
         self.io.update()
